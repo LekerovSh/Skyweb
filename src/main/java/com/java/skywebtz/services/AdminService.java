@@ -24,7 +24,8 @@ public class AdminService {
     public String method1(Long value) {
         // emulate heavy remote call
         try {
-            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
+//            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             // ignore
         }
@@ -34,7 +35,8 @@ public class AdminService {
     public String method2(Long value) {
         // emulate heavy remote call
         try {
-            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
+//            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             // ignore
         }
@@ -74,9 +76,11 @@ public class AdminService {
     @Transactional
     public HashMap<Long, String> add(List<Long> longs) throws InterruptedException, ExecutionException {
         HashMap<Long, String > map = new HashMap<Long, String >();
+        ExecutorService service = Executors.newFixedThreadPool(longs.size() * 2);
+        List<Future<String>> futureList = new ArrayList<>();
 
         for(Long it: longs) {
-            ExecutorService service = Executors.newFixedThreadPool(2);
+
             Future<String> future = service.submit(() -> {
                 return method1(it);
             });
@@ -85,9 +89,16 @@ public class AdminService {
                 return method2(it);
             });
 
-            String res1 = future.get();
-            String res2 = future2.get();
+            futureList.add(future);
+            futureList.add(future2);
+
+        }
+
+        for (int i = 0; i < futureList.size(); i += 2) {
+            String res1 = String.valueOf(futureList.get(i).get());
+            String res2 = String.valueOf(futureList.get(i + 1).get());
             String res = combine(res1, res2);
+            Long it = longs.get(i / 2);
 
             if (!adminRepository.existsByValue(it)) {
                 AdminModel adminModel = new AdminModel(it, res, System.currentTimeMillis());
