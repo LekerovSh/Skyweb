@@ -24,8 +24,7 @@ public class AdminService {
     public String method1(Long value) {
         // emulate heavy remote call
         try {
-//            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
-            Thread.sleep(1000);
+            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
         } catch (InterruptedException e) {
             // ignore
         }
@@ -35,8 +34,7 @@ public class AdminService {
     public String method2(Long value) {
         // emulate heavy remote call
         try {
-//            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
-            Thread.sleep(1000);
+            Thread.sleep(Double.valueOf(Math.random()*2000).longValue() ) ;
         } catch (InterruptedException e) {
             // ignore
         }
